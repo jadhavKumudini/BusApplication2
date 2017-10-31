@@ -50,7 +50,7 @@ public class ShiftScheduleDBActivity extends AppCompatActivity {
                 edTotal.setText("");
                 edShifts.setText("");
 
-                Toast.makeText(getApplicationContext(),"Successfully stored", Toast.LENGTH_SHORT);
+                Toast.makeText(ShiftScheduleDBActivity.this, "Successfully stored!", Toast.LENGTH_SHORT).show();
 
             }
         });

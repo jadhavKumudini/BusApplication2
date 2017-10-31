@@ -59,31 +59,7 @@ public class LocationDBActivity extends AppCompatActivity {
             }
         });
 
-        /*
-        buttonSave.setOnClickListener(new View.OnClickListener() {
-            String lname = editTextLocation.getText().toString();
-            String lt = editTextLatitude.getText().toString();
-            String ln = editTextLongitude.getText().toString();
 
-            Location loc = new Location(lname,lt,ln);
-            @Override
-            public void onClick(View v) {
-
-                DBHandler db = new DBHandler(getApplicationContext());
-
-                db.addLocationTableData(loc);
-
-
-                editTextLocation.setText("");
-                editTextLatitude.setText("");
-                editTextLongitude.setText("");
-
-                // Hiding the keyboard
-                //InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                //imm.hideSoftInputFromWindow(inputLabel.getWindowToken(), 0);
-               // Toast.makeText(LocationDBActivity.this, "Stored Successfuly!", Toast.LENGTH_SHORT).show();
-            }
-        });*/
 
         buttonCancel.setOnClickListener(new View.OnClickListener() {
             @Override

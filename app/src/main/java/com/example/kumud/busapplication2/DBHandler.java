@@ -22,7 +22,9 @@ public class DBHandler extends SQLiteOpenHelper {
     public static final String COLUMN_LATITUDE = "latitude";
     public static final String COLUMN_LONGITUDE = "longitude";
 
-    private static final String TABLE_SCHEDULE = "Schedule";
+   // private static final String TABLE_SCHEDULE = "Schedule";
+     private static final String TABLE_SCHEDULE = "BusSchedule";
+    private static final String TABLE_BUS_SCHEDULE = "BusSchedule";
     public static final String COLUMN_PICKUPLOCATION = "pickupLocation";
     public static final String COLUMN_TOURTO = "tourTo";
     public static final String COLUMN_TOTALSHIFTS = "totalShifts";
@@ -40,6 +42,12 @@ public class DBHandler extends SQLiteOpenHelper {
             + COLUMN_TOTALSHIFTS + " TEXT," + COLUMN_SHIFTLIST + " TEXT" + ")";
 
 
+
+    // Schedule table create statement
+    private static final String CREATE_TABLE_BUS_SCHEDULE = "CREATE TABLE " + TABLE_BUS_SCHEDULE
+            + "(" + COLUMN_PICKUPLOCATION + " TEXT," + COLUMN_TOURTO + " TEXT,"
+            + COLUMN_TOTALSHIFTS + " TEXT," + COLUMN_SHIFTLIST + " TEXT" + ")";
+
     public DBHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
 
@@ -52,16 +60,20 @@ public class DBHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         //createing tables
+        db.execSQL(CREATE_TABLE_BUS_SCHEDULE);
         db.execSQL(CREATE_TABLE_LOCATIONS);
-        db.execSQL(CREATE_TABLE_SCHEDULE);
-    }
+       // db.execSQL(CREATE_TABLE_SCHEDULE);
 
+    }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // on upgrade drop older tables
+
+        db.execSQL("DROP TABLE IF EXISTS " + CREATE_TABLE_BUS_SCHEDULE);
+
         db.execSQL("DROP TABLE IF EXISTS " + CREATE_TABLE_LOCATIONS);
-        db.execSQL("DROP TABLE IF EXISTS " + CREATE_TABLE_SCHEDULE);
+       // db.execSQL("DROP TABLE IF EXISTS " + CREATE_TABLE_SCHEDULE);
 
         // create new tables
         onCreate(db);
@@ -82,6 +94,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
     public void addScheduleTableData(Schedule schedule){
         SQLiteDatabase db =  this.getWritableDatabase();
+
         //adding schedule in schedule table
         ContentValues valuesSchedule = new ContentValues();
         valuesSchedule.put(COLUMN_PICKUPLOCATION, schedule.getPickupLocation());
@@ -89,7 +102,8 @@ public class DBHandler extends SQLiteOpenHelper {
         valuesSchedule.put(COLUMN_TOTALSHIFTS, schedule.getTotalShifts());
         valuesSchedule.put(COLUMN_SHIFTLIST, schedule.getListshifts());
 
-        db.insert(TABLE_SCHEDULE, null, valuesSchedule);
+        db.insert(TABLE_BUS_SCHEDULE, null, valuesSchedule);
+
         db.close(); // Closing database connection
     }
 
@@ -142,11 +156,32 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
 
-    public void closeDB() {
+
+
+
+
+    public String getScheduleListForPickup(String pickupLocation, String tour ) {
+        String str = "";
+       // String query = "SELECT * FROM " +  TABLE_SCHEDULE  +  "WHERE " +  COLUMN_PICKUPLOCATION +  "='"+ pickupLocation + "' "  +   "AND " +  COLUMN_TOURTO + "='" + tour + "' ";
+        String query = "SELECT"+ COLUMN_SHIFTLIST + "FROM" +  TABLE_BUS_SCHEDULE + "WHERE" + COLUMN_PICKUPLOCATION + "='"+ pickupLocation + "' "  +   "AND " +  COLUMN_TOURTO + "='" + tour + "' ";
+        //+  "='"+ pickupLocation + "' "  +   "AND " +  COLUMN_TOURTO + "='" + tour + "' ";
+
         SQLiteDatabase db = this.getReadableDatabase();
-        if (db != null && db.isOpen())
-            db.close();
+        Cursor c = db.rawQuery(query,null);
+
+        if(c.moveToFirst()){
+            do{
+               str = c.getString(c.getColumnIndex(COLUMN_SHIFTLIST));
+
+            }while (c.moveToFirst());
+        }
+
+        c.close();
+        db.close();
+        return str;
     }
+
+
 
 
 }
