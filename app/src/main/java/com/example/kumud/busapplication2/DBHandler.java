@@ -14,42 +14,32 @@ import java.util.ArrayList;
 
 public class DBHandler extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "ShuttleService.db";
     private static final String TABLE_LOCATIONS = "locations";
+    private static final String TABLE_SHUTTLE_SCHEDULE = "ShuttleSchedule";
 
     public static final String COLUMN_LOCATIONNAME = "locationName";
     public static final String COLUMN_LATITUDE = "latitude";
     public static final String COLUMN_LONGITUDE = "longitude";
 
-   // private static final String TABLE_SCHEDULE = "Schedule";
-     private static final String TABLE_SCHEDULE = "BusSchedule";
-    private static final String TABLE_BUS_SCHEDULE = "BusSchedule";
-    public static final String COLUMN_PICKUPLOCATION = "pickupLocation";
-    public static final String COLUMN_TOURTO = "tourTo";
-    public static final String COLUMN_TOTALSHIFTS = "totalShifts";
-    public static final String COLUMN_SHIFTLIST = "shiftsList";
 
+    public static final String COLUMN_PICKLOCATION = "pickup";
+    public static final String COLUMN_TOUR= "tour";
+    public static final String COLUMN_SCHEDULE_LIST = "ScheduleList";
 
     // Locations table create statement
     private static final String CREATE_TABLE_LOCATIONS = "CREATE TABLE "
             + TABLE_LOCATIONS + "(" + COLUMN_LOCATIONNAME + " TEXT PRIMARY KEY," + COLUMN_LATITUDE
             + " TEXT," + COLUMN_LONGITUDE + " TEXT "  + ")";
 
-    // Schedule table create statement
-    private static final String CREATE_TABLE_SCHEDULE = "CREATE TABLE " + TABLE_SCHEDULE
-            + "(" + COLUMN_PICKUPLOCATION + " TEXT," + COLUMN_TOURTO + " TEXT,"
-            + COLUMN_TOTALSHIFTS + " TEXT," + COLUMN_SHIFTLIST + " TEXT" + ")";
+    private static final String CREATE_TABLE_SCHEDULE = "CREATE TABLE "
+            + TABLE_SHUTTLE_SCHEDULE + "(" + COLUMN_PICKLOCATION + " TEXT," + COLUMN_TOUR
+            + " TEXT," + COLUMN_SCHEDULE_LIST + " TEXT "  + ")";
 
-
-
-    // Schedule table create statement
-    private static final String CREATE_TABLE_BUS_SCHEDULE = "CREATE TABLE " + TABLE_BUS_SCHEDULE
-            + "(" + COLUMN_PICKUPLOCATION + " TEXT," + COLUMN_TOURTO + " TEXT,"
-            + COLUMN_TOTALSHIFTS + " TEXT," + COLUMN_SHIFTLIST + " TEXT" + ")";
 
     public DBHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, name, factory, version);
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
 
     }
 
@@ -60,23 +50,20 @@ public class DBHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         //createing tables
-        db.execSQL(CREATE_TABLE_BUS_SCHEDULE);
+
         db.execSQL(CREATE_TABLE_LOCATIONS);
-       // db.execSQL(CREATE_TABLE_SCHEDULE);
+        db.execSQL(CREATE_TABLE_SCHEDULE);
 
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // on upgrade drop older tables
-
-        db.execSQL("DROP TABLE IF EXISTS " + CREATE_TABLE_BUS_SCHEDULE);
-
-        db.execSQL("DROP TABLE IF EXISTS " + CREATE_TABLE_LOCATIONS);
-       // db.execSQL("DROP TABLE IF EXISTS " + CREATE_TABLE_SCHEDULE);
-
+       // db.execSQL("DROP TABLE IF EXISTS " + CREATE_TABLE_LOCATIONS);
         // create new tables
-        onCreate(db);
+       // onCreate(db);
+
+        db.execSQL(CREATE_TABLE_SCHEDULE);
     }
 
    public void addLocationTableData(Location location){
@@ -94,15 +81,13 @@ public class DBHandler extends SQLiteOpenHelper {
 
     public void addScheduleTableData(Schedule schedule){
         SQLiteDatabase db =  this.getWritableDatabase();
-
         //adding schedule in schedule table
         ContentValues valuesSchedule = new ContentValues();
-        valuesSchedule.put(COLUMN_PICKUPLOCATION, schedule.getPickupLocation());
-        valuesSchedule.put(COLUMN_TOURTO, schedule.getTourTo());
-        valuesSchedule.put(COLUMN_TOTALSHIFTS, schedule.getTotalShifts());
-        valuesSchedule.put(COLUMN_SHIFTLIST, schedule.getListshifts());
+        valuesSchedule.put(COLUMN_PICKLOCATION, schedule.getPickupLocation());
+        valuesSchedule.put(COLUMN_TOUR, schedule.getTour());
+        valuesSchedule.put(COLUMN_SCHEDULE_LIST, schedule.getListshifts());
 
-        db.insert(TABLE_BUS_SCHEDULE, null, valuesSchedule);
+        db.insert(TABLE_SHUTTLE_SCHEDULE, null, valuesSchedule);
 
         db.close(); // Closing database connection
     }
@@ -155,29 +140,28 @@ public class DBHandler extends SQLiteOpenHelper {
         return locationNames;
     }
 
-
-
-
-
-
     public String getScheduleListForPickup(String pickupLocation, String tour ) {
+
+        SQLiteDatabase db= this.getReadableDatabase();
+        final String columNames[] = {COLUMN_PICKLOCATION, COLUMN_TOUR, COLUMN_SCHEDULE_LIST};
+        String whereClause = COLUMN_PICKLOCATION + " = ? AND " + COLUMN_TOUR + " = ? ";
+        String[] whereArgs = {pickupLocation, tour};
+        Schedule sch = new Schedule();
         String str = "";
-       // String query = "SELECT * FROM " +  TABLE_SCHEDULE  +  "WHERE " +  COLUMN_PICKUPLOCATION +  "='"+ pickupLocation + "' "  +   "AND " +  COLUMN_TOURTO + "='" + tour + "' ";
-        String query = "SELECT"+ COLUMN_SHIFTLIST + "FROM" +  TABLE_BUS_SCHEDULE + "WHERE" + COLUMN_PICKUPLOCATION + "='"+ pickupLocation + "' "  +   "AND " +  COLUMN_TOURTO + "='" + tour + "' ";
-        //+  "='"+ pickupLocation + "' "  +   "AND " +  COLUMN_TOURTO + "='" + tour + "' ";
+        Cursor cursor = db.query(TABLE_SHUTTLE_SCHEDULE, columNames, whereClause, whereArgs, null, null, null);
+        while (cursor.moveToNext()) {
+            str = cursor.getString(0);
 
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery(query,null);
+            str = cursor.getString(2);
+           /* sch.setPickupLocation(cursor.getString(cursor.getColumnIndex(COLUMN_PICKLOCATION)));
+            sch.setPickupLocation(cursor.getString(cursor.getColumnIndex(COLUMN_TOUR)));
+            sch.setPickupLocation(cursor.getString(cursor.getColumnIndex(COLUMN_SCHEDULE_LIST)));*/
 
-        if(c.moveToFirst()){
-            do{
-               str = c.getString(c.getColumnIndex(COLUMN_SHIFTLIST));
-
-            }while (c.moveToFirst());
         }
 
-        c.close();
-        db.close();
+        cursor.close();
+        db.close(); // Closing database connection
+
         return str;
     }
 

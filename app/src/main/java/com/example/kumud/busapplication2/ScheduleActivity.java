@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -21,13 +22,13 @@ public class ScheduleActivity extends AppCompatActivity {
 
     TextView text;
     DBHandler db;
-    List<String> timingsList;
-    String listStr;
+    List<String> listStr;
     RecyclerView recyclerView;
     RecyclerView.Adapter adapter;
     RecyclerView.LayoutManager layoutManager;
     String pickupLocation;
     String tour;
+    TextView textNote;
     Intent intent;
 
 
@@ -36,35 +37,34 @@ public class ScheduleActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schedule_recyclerview);
+        textNote = (TextView) findViewById(R.id.textViewNote);
 
-        Schedule schedule;
+        Schedule schedule = new Schedule();
         intent = getIntent();
         tour = intent.getStringExtra("tour");
         pickupLocation = intent.getStringExtra("pickupLocation");
 
         db = new DBHandler(this);
-        timingsList = new ArrayList<String>() ;
 
 
-        schedule = db.getScheduleForPickup(pickupLocation,tour);
+        String str = db.getScheduleListForPickup(pickupLocation,tour);
+        listStr = generateListFromString(str);
 
-        listStr =schedule.getListshifts();
-       // listStr = db.getScheduleListForPickup(pickupLocation, tour);
-
-
-        timingsList = generateListFromString(listStr);
-
-
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        recyclerView.setHasFixedSize(true);
+        if(str != "") {
+            recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+            recyclerView.setHasFixedSize(true);
 
 
-        layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
+            layoutManager = new LinearLayoutManager(this);
+            recyclerView.setLayoutManager(layoutManager);
 
-        adapter = new TimingAdapter(this,timingsList);
-        recyclerView.setAdapter(adapter);
-
+            adapter = new TimingAdapter(this, listStr);
+            recyclerView.setAdapter(adapter);
+            textNote.setText("");
+        }
+        else{
+            textNote.setText("No Data Found");
+        }
 
     }
 

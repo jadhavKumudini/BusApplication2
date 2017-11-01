@@ -1,7 +1,6 @@
 package com.example.kumud.busapplication2;
 
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -23,9 +22,8 @@ public class ShiftScheduleDBActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shiftscheduledb);
 
-        edPickup = (EditText) findViewById(R.id.editTextPKF);
-        edTour = (EditText) findViewById(R.id.editTextTT);
-        edTotal = (EditText) findViewById(R.id.editTextTS);
+        edTour = (EditText) findViewById(R.id.editTextT);
+        edPickup = (EditText) findViewById(R.id.editTextPK);
         edShifts = (EditText) findViewById(R.id.editTextSL);
 
         btnsave = (Button) findViewById(R.id.buttonSave);
@@ -38,16 +36,16 @@ public class ShiftScheduleDBActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String pickup = edPickup.getText().toString();
                 String tour = edTour.getText().toString();
-                String total = edTotal.getText().toString();
                 String shifts = edShifts.getText().toString();
 
                 DBHandler db = new DBHandler(getApplicationContext());
 
-                db.addScheduleTableData(new Schedule(pickup,tour,total,shifts));
+                db.addScheduleTableData(new Schedule(pickup,tour,shifts));
+
+                Toast.makeText(ShiftScheduleDBActivity.this, "Working", Toast.LENGTH_SHORT).show();
 
                 edPickup.setText("");
                 edTour.setText("");
-                edTotal.setText("");
                 edShifts.setText("");
 
                 Toast.makeText(ShiftScheduleDBActivity.this, "Successfully stored!", Toast.LENGTH_SHORT).show();

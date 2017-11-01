@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-       <activity android:name=".ScheduleActivity"></activity>
+<activity android:name=".ScheduleActivity"></activity>
 
         <activity android:name=".MainActivity">
             <intent-filter>

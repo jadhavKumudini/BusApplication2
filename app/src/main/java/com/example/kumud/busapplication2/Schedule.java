@@ -6,18 +6,17 @@ package com.example.kumud.busapplication2;
 
 public class Schedule {
     public String pickupLocation;
-    public String tourTo;
-    public String totalShifts;
+    public String tour;
     public String listshifts;
 
     public  Schedule(){}
 
-    public Schedule(String pickupLocation, String tourTo, String totalShifts, String listshifts) {
+    public Schedule(String pickupLocation, String tour,  String listshifts) {
         this.pickupLocation = pickupLocation;
-        this.tourTo = tourTo;
-        this.totalShifts = totalShifts;
+        this.tour = tour;
         this.listshifts = listshifts;
     }
+
 
     public String getPickupLocation() {
         return pickupLocation;
@@ -27,21 +26,14 @@ public class Schedule {
         this.pickupLocation = pickupLocation;
     }
 
-    public String getTourTo() {
-        return tourTo;
+    public String getTour() {
+        return tour;
     }
 
-    public void setTourTo(String tourTo) {
-        this.tourTo = tourTo;
+    public void setTour(String tour) {
+        this.tour = tour;
     }
 
-    public String getTotalShifts() {
-        return totalShifts;
-    }
-
-    public void setTotalShifts(String totalShifts) {
-        this.totalShifts = totalShifts;
-    }
 
     public String getListshifts() {
         return listshifts;
