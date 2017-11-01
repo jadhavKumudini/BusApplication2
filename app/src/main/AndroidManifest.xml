@@ -15,7 +15,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-<activity android:name=".ScheduleActivity"></activity>
+
+        <!--<activity android:name=".ShiftScheduleDBActivity"></activity>-->
+        <activity android:name=".LocationDBActivity"></activity>
+
+        <activity android:name=".MapActivity"></activity>
+
+        <activity android:name=".NotificationActivity"></activity>
+
+        <activity android:name=".ScheduleActivity"></activity>
 
         <activity android:name=".MainActivity">
             <intent-filter>

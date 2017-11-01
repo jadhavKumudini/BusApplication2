@@ -1,6 +1,7 @@
 package com.example.kumud.busapplication2;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,27 +18,38 @@ import java.util.List;
 public class TimingAdapter extends RecyclerView.Adapter<TimingAdapter.TiminigViewHolder> {
     private List<String> timingList;
     private Context context;
+    private String pickup;
+    private String tour;
 
-    public TimingAdapter(Context context,List<String> timinglist){
+    public TimingAdapter(Context context,List<String> timinglist,String pickup, String tour){
         this.context = context;
         this.timingList = timinglist;
+        this.pickup = pickup;
+        this.tour = tour;
     }
 
     @Override
-    public void onBindViewHolder(TiminigViewHolder holder, int position) {
+    public void onBindViewHolder(final TiminigViewHolder holder, int position) {
        holder.textTiming.setText(timingList.get(position));
 
         holder.btnNotify.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
 
+               String textTime = holder.textTiming.toString();
+               Intent intent = new Intent(context, NotificationActivity.class);
+               intent.putExtra("textTime",textTime);
+               context.startActivity(intent);
            }
        });
 
         holder.btnTrackMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(context, MapActivity.class);
+                intent.putExtra("pickupLocation",pickup);
+                intent.putExtra("tour",tour);
+                context.startActivity(intent);
             }
         });
 
@@ -47,7 +59,6 @@ public class TimingAdapter extends RecyclerView.Adapter<TimingAdapter.TiminigVie
     @Override
     public TiminigViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_schedule_cardview,parent,false);
-
 
         return new TiminigViewHolder(itemView);
     }

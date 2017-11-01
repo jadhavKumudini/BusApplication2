@@ -129,6 +129,7 @@ public class DBHandler extends SQLiteOpenHelper {
                 String lc = "";
                  lc = c.getString(0);
 
+
                 // adding to location list
                 locationNames.add(lc);
             } while (c.moveToNext());

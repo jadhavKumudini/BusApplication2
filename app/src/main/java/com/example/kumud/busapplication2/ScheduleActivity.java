@@ -29,6 +29,7 @@ public class ScheduleActivity extends AppCompatActivity {
     String pickupLocation;
     String tour;
     TextView textNote;
+    TextView serviceText;
     Intent intent;
 
 
@@ -38,6 +39,7 @@ public class ScheduleActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schedule_recyclerview);
         textNote = (TextView) findViewById(R.id.textViewNote);
+        serviceText = (TextView)findViewById(R.id.textViewNameService);
 
         Schedule schedule = new Schedule();
         intent = getIntent();
@@ -45,8 +47,14 @@ public class ScheduleActivity extends AppCompatActivity {
         pickupLocation = intent.getStringExtra("pickupLocation");
 
         db = new DBHandler(this);
+        String serviceTxt ="";
 
-
+        if(tour.contains("From")) {
+           serviceTxt = tour + " To " + pickupLocation;
+        }else{
+            serviceTxt = pickupLocation + " " + tour;
+        }
+        serviceText.setText(serviceTxt);
         String str = db.getScheduleListForPickup(pickupLocation,tour);
         listStr = generateListFromString(str);
 
@@ -58,7 +66,7 @@ public class ScheduleActivity extends AppCompatActivity {
             layoutManager = new LinearLayoutManager(this);
             recyclerView.setLayoutManager(layoutManager);
 
-            adapter = new TimingAdapter(this, listStr);
+            adapter = new TimingAdapter(this, listStr,pickupLocation,tour);
             recyclerView.setAdapter(adapter);
             textNote.setText("");
         }
