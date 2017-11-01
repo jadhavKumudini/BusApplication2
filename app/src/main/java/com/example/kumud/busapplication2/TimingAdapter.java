@@ -46,7 +46,7 @@ public class TimingAdapter extends RecyclerView.Adapter<TimingAdapter.TiminigVie
         holder.btnTrackMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, MapActivity.class);
+                Intent intent = new Intent(context, MapsActivity.class);
                 intent.putExtra("pickupLocation",pickup);
                 intent.putExtra("tour",tour);
                 context.startActivity(intent);
